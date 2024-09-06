@@ -88,6 +88,7 @@ type Client struct {
 	RefreshDefinitionsAfter time.Duration
 	Username                string
 	Password                string
+    UserAgent               string
 
 	once                 sync.Once
 	definitionsErr       error
@@ -235,6 +236,11 @@ func (p *process) doRequest(url string) ([]byte, error) {
 	if p.Client.Username != "" && p.Client.Password != "" {
 		req.SetBasicAuth(p.Client.Username, p.Client.Password)
 	}
+
+    // Set user-agent if specified
+    if p.Client.UserAgent != "" {
+        req.Header.Add("User-Agent", p.Client.UserAgent)
+    }
 
 	req.ContentLength = int64(len(p.Payload))
 
