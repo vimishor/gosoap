@@ -92,6 +92,9 @@ type Client struct {
 	Username                string
 	Password                string
 
+	// HTTP Request headers
+	Headers map[string]string
+
 	once                 sync.Once
 	definitionsErr       error
 	onRequest            sync.WaitGroup
@@ -237,6 +240,12 @@ func (p *process) doRequest(url string) ([]byte, error) {
 
 	if p.Client.Username != "" && p.Client.Password != "" {
 		req.SetBasicAuth(p.Client.Username, p.Client.Password)
+	}
+
+	if len(p.Client.Headers) > 0 {
+		for name, val := range p.Client.Headers {
+			req.Header.Add(name, val)
+		}
 	}
 
 	req.ContentLength = int64(len(p.Payload))
